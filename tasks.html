@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tasks</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 10vh;
+            margin: 0;
+            padding: 0;
+            font-family: 'Gotham', sans-serif;
+            font-size: 15px;
+        }
+
+        .container {
+            width: 70%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .task {
+            width: 100%;
+            margin-bottom: 20px;
+            padding: 10px;
+            box-sizing: border-box;
+            border: 1px solid #ccc; /* Окантовка */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Тень */
+            background-color: #fff; /* Фон задачи */
+
+
+        }
+
+        input[type="text"], input[type="number"] {
+            padding: 8px; /* Внутренний отступ */
+            margin-bottom: 10px; /* Отступ снизу */
+            border: 1px solid #ccc; /* Окантовка */
+            border-radius: 4px; /* Скругленные углы */
+            box-sizing: border-box; /* Убедимся, что padding и border включены в ширину элемента */
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+<div class="task">
+    <div id="ts1"></div>
+    <label for="ints1">Длина массива:</label>
+    <input type="number" id="ints1"  min="1" value="0">
+    <div id="outts1" style="word-break:break-all;"></div>
+</div>
+
+<div class="task">
+    <div id="ts2"></div>
+    <label for="ints2">Слово:</label>
+    <input type="text" id="ints2" maxlength="1000">
+    <div id="outts2" style="word-break:break-all;"></div>
+</div>
+
+<div class="task">
+    <div id="ts3"></div>
+    <label for="ints3">Градусы Цельсия:</label>
+    <input type="text" id="ints3" maxlength="10">
+    <div id="outts3" style="word-break:break-all;"></div>
+</div>
+
+<div class="task">
+    <div id="ts4"></div>
+    <label for="ints41">Часы:</label>
+    <input type="number" id="ints41" min="1">
+    <label for="ints42">Минуты:</label>
+    <input type="number" id="ints42" min="1">
+    <div id="outts4" style="word-break:break-all;"></div>
+</div>
+</div>
+
+<script type="module">
+    import { task1, RandomArray } from './JS/task_1.js';
+    document.getElementById('ts1').textContent = task1;
+    document.getElementById('ints1').addEventListener('input', (event) => {
+        clear_element('outts1');
+        let arrayLengthInput = event.target.value;
+
+        if (!arrayLengthInput) {
+            return;
+        }
+        let length = parseInt(arrayLengthInput, 10);
+
+        if (!isNaN(length) && length < 10000) {
+            let randomArray = new RandomArray(length);
+            let outTs1 = document.getElementById('outts1');
+            outTs1.innerHTML += `Массив: [ ${randomArray.getArray()} ] <br>`;
+            outTs1.innerHTML += `Минимальное значение: ${randomArray.getMin()} <br>`;
+            outTs1.innerHTML += `Среднее значение: ${randomArray.getAvg()} <br>`;
+            outTs1.innerHTML += `Максимальное значение: ${randomArray.getMax()} <br>`;
+        } else {
+            let message = length > 10000 ? "Многовато" : "Некорректно";
+            clear_input('ints1');
+            clear_element('outts1');
+            alert(message);
+        }
+    });
+
+    import { task2, findDuplicateChar } from './JS/task_2.js';
+    document.getElementById('ts2').textContent = task2;
+    document.getElementById('ints2').addEventListener('input', (event) => {
+        clear_element('outts2');
+        let word = event.target.value;
+        let count_letter = findDuplicateChar(word);
+        let outTs2 = document.getElementById('outts2');
+        for (let key of Object.keys(count_letter)) {
+            if (count_letter[key] > 1) {
+                outTs2.innerHTML += `Символ "${key}" : ${count_letter[key]} <br>`;
+            }
+        }
+    });
+
+    import { task3, BaseConverter } from './JS/task_3.js';
+    document.getElementById('ts3').textContent = task3;
+    document.getElementById('ints3').addEventListener('input', (event) => {
+        clear_element('outts3');
+        let inpDegree = event.target.value;
+
+        if (!inpDegree) {
+            return;
+        }
+        let degree = parseFloat(inpDegree);
+
+        if (!isNaN(degree)) {
+            let converter = new BaseConverter(degree);
+            let outTs3 = document.getElementById('outts3');
+            outTs3.innerHTML += `Шкала Кельвина: ${converter.toKelvin()}  `;
+            outTs3.innerHTML += `Шкала Фаренгейта: ${converter.toFahrenheit()} <br>`;
+            outTs3.innerHTML += `Шкала Ранкина: ${converter.toRankin()} `;
+            outTs3.innerHTML += `Шкала Реомюра: ${converter.toReaumur()} <br>`;
+        } else {
+            clear_input('ints3');
+            clear_element('ints3');
+            alert("Некорректно");
+        }
+    });
+
+    import { task4, calculateClockAngle } from './JS/task_4.js';
+    document.getElementById('ts4').textContent = task4;
+
+    document.getElementById('ints41').addEventListener('input', (event) => {
+        let hour = Math.abs(parseInt(event.target.value));
+        let minut = Math.abs(parseInt(document.getElementById('ints42').value));
+
+        if (hour > 12) {
+            alert("Некорректный час");
+            clear_input('ints41');
+            clear_element('outts4');
+            return;
+        }
+
+        if (isNaN(hour) || isNaN(minut)) {
+            return;
+        }
+
+        let angle = calculateClockAngle(hour, minut);
+        let outTs4 = document.getElementById('outts4');
+        outTs4.innerHTML = `Образуют угол: ${angle}`;
+    });
+
+    document.getElementById('ints42').addEventListener('input', (event) => {
+        let minut = Math.abs(parseInt(event.target.value));
+        let hour = Math.abs(parseInt(document.getElementById('ints41').value));
+
+        if (minut > 60) {
+            alert("Некорректны минуты");
+            clear_input('ints42');
+            clear_element('outts4');
+            return;
+        }
+
+        if (isNaN(hour) || isNaN(minut)) {
+            return;
+        }
+        let angle = calculateClockAngle(hour, minut);
+        let outTs4 = document.getElementById('outts4');
+        outTs4.innerHTML = `Образуют угол: ${angle}`;
+    });
+
+    function clear_element(id) {
+        let elem = document.getElementById(id);
+        elem.innerHTML = "";
+    }
+
+    function clear_input(id) {
+        let elem = document.getElementById(id);
+        elem.value = '';
+    }
+</script>
+</body>
+</html>
